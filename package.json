@@ -8,5 +8,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "node-turn": "github:kqwq/node-turn"
+  },
+  "type": "module"
 }
