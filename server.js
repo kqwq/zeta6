@@ -26,7 +26,6 @@ export class zeta6server {
         username: "password",
       },
     });
-    this.git = simpleGit();
     this.incompleteOffers = {}; // { uuid1: [packet1, packet2, ...] }
     this.peers = [];
     this.turn.onSdpPacket = async (contents) => {
@@ -86,6 +85,7 @@ export class zeta6server {
       // Step 2.4: Push ${uuid}.js to the GitHub repository
       const code = `window.offer = ${JSON.stringify(answer.sdp)};`;
       await fs.promises.writeFile(`offers/${uuid}.js`, code);
+      const git = simpleGit();
       git.addConfig("user.email", "user@example.com");
       git.addConfig("user.name", "User");
       git.add(`.`); // Add all files
