@@ -80,9 +80,10 @@ export class zeta6server {
         peer.on("open", () =>
           this.eventHandler("open", null, peer, this.peers)
         );
-        peer.on("close", () =>
-          this.eventHandler("close", null, peer, this.peers)
-        );
+        peer.on("close", () => {
+          this.peers = this.peers.filter((p) => p !== peer);
+          this.eventHandler("close", null, peer, this.peers);
+        });
       });
 
       // Step 2.4: Push ${uuid}.js to the GitHub repository
