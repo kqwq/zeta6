@@ -2,6 +2,7 @@ import Turn from "node-turn";
 import simpleGit from "simple-git";
 import fs from "fs";
 import SimplePeer from "simple-peer";
+import wrtc from "wrtc";
 
 // Step 2. Listen with TURN server and commit the file
 const listenToPort = 47777;
@@ -39,6 +40,7 @@ server.onSdpPacket = async (contents) => {
   console.log("start 2.3: offer", offer.length, offer);
   const peer = new SimplePeer({
     initiator: false,
+    wrtc: wrtc,
   });
   await peer.signal({ type: "offer", sdp: offer });
   const answer = await new Promise((resolve) => {
