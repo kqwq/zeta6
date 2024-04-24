@@ -37,13 +37,7 @@ server.onSdpPacket = async (contents) => {
 
     // Step 2.3: Create the connection
     console.log("start 2.3: offer", offer.length, offer);
-    const pc = new wrtc.RTCPeerConnection({
-      iceServers: [
-        {
-          url: "stun:stun.l.google.com:19302",
-        },
-      ],
-    });
+    const pc = new wrtc.RTCPeerConnection();
     await pc.setRemoteDescription({ type: "offer", sdp: offer });
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
