@@ -1,7 +1,7 @@
 import Turn from "node-turn";
 import simpleGit from "simple-git";
 import fs from "fs";
-import wrtc from "wrtc";
+import SimplePeer from "simple-peer";
 
 // Step 2. Listen with TURN server and commit the file
 const listenToPort = 47777;
@@ -37,19 +37,32 @@ server.onSdpPacket = async (contents) => {
 
     // Step 2.3: Create the connection
     console.log("start 2.3: offer", offer.length, offer);
-    const pc = new wrtc.RTCPeerConnection();
-    await pc.setRemoteDescription({ type: "offer", sdp: offer });
-    const answer = await pc.createAnswer();
-    await pc.setLocalDescription(answer);
-    const chat = pc.createDataChannel("chat");
-    chat.onmessage = (event) => console.log("message", event.data);
-    chat.onopen = (event) => console.log("open", event);
-    chat.onclose = (event) => console.log("close", event);
-    chat.onerror = (event) => console.log("error", event);
-    pc.onconnectionstatechange = (event) => {
-      console.log("connection state", event);
-      chat.send("Hello, world! from server");
-    };
+    const peer = new SimplePeer({
+      initiator: false,
+    });
+    await peer.signal({ type: "offer", sdp: offer });
+    const answer = await new Promise((resolve) => {
+      peer.on("signal", (answer) => {
+        resolve(answer);
+      });
+    });
+    peer.on("connect", () => {
+      const chat = peer;
+      console.log("open");
+      chat.send("Hello, world! from client");
+
+      chat.on("data", (data) => {
+        console.log("message", data.toString());
+      });
+
+      chat.on("close", () => {
+        console.log("close");
+      });
+
+      chat.on("error", (err) => {
+        console.log("error", err);
+      });
+    });
 
     // Step 2.4: Create the file
     console.log("step 2.4 start", uuid);
