@@ -46,8 +46,10 @@ server.onSdpPacket = async (contents) => {
     };
     const chat = pc.createDataChannel("chat");
     chat.onmessage = (event) => console.log("message", event.data);
-    chat.send("Hello, world! from server");
-    chat.onopen = () => console.log("open");
+    chat.onopen = () => {
+      console.log("open");
+      chat.send("Hello, world! from server");
+    };
     chat.onclose = () => console.log("close");
     chat.onerror = (event) => console.log("error", event);
     const answer = await pc.createAnswer();

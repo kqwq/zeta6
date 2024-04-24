@@ -25,8 +25,10 @@ async function connect(connectionString) {
   };
   const chat = pc.createDataChannel("chat");
   chat.onmessage = (event) => console.log("message", event.data);
-  chat.send("Hello, world! from client");
-  chat.onopen = () => console.log("open");
+  chat.onopen = () => {
+    console.log("open");
+    chat.send("Hello, world! from client");
+  };
   chat.onclose = () => console.log("close");
   chat.onerror = (event) => console.log("error", event);
   const offerPackets = [];
