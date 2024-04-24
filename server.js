@@ -16,6 +16,7 @@ const server = new Turn({
 
 const git = simpleGit();
 const incompleteOffers = {}; // { uuid1: [packet1, packet2, ...] }
+const peers = [];
 server.onSdpPacket = async (contents) => {
   console.log("sdp", JSON.stringify(contents));
 
@@ -52,19 +53,20 @@ server.onSdpPacket = async (contents) => {
     });
   });
   peer.on("connect", () => {
-    const chat = peer;
-    console.log("open");
-    chat.send("Hello, world! from client");
+    console.log("connected");
+    peers.push(peer);
+    peer.send("Hello, world! from client");
 
-    chat.on("data", (data) => {
+    peer.on("data", (data) => {
       console.log("message", data.toString());
     });
 
-    chat.on("close", () => {
+    peer.on("close", () => {
       console.log("close");
+      peers.splice(peers.indexOf(peer), 1);
     });
 
-    chat.on("error", (err) => {
+    peer.on("error", (err) => {
       console.log("error", err);
     });
   });
