@@ -18,6 +18,8 @@ const incompleteOffers = {}; // { uuid1: [packet1, packet2, ...] }
 server.onSdpPacket = async (contents) => {
   console.log("sdp", JSON.stringify(contents));
 
+  if (!contents.startsWith("zeta6:")) return;
+
   // Step 2.1: Parse the packet
   const [version, uuid, packetNum, numPackets, ...rest] = contents.split(":");
   const data = rest.join(":");

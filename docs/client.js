@@ -14,7 +14,19 @@ async function connect(connectionString) {
   // Step 1.1: Prepare packets for the connection offer
   const [ip, port, repo] = connectionString.split(":");
   const uuid = Math.random().toString(36).substring(2, 15);
-  const peer = new SimplePeer({ initiator: true });
+  const peer = new SimplePeer({
+    initiator: true,
+    config: {
+      iceServers: [
+        {
+          urls: [`turn:${ip}:${port}`],
+          username: "1",
+          credential: "password",
+        },
+      ],
+    },
+  });
+
   window.peer = peer;
   const offer = await new Promise((resolve) => {
     peer.on("signal", (offer) => {
