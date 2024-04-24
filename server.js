@@ -36,7 +36,7 @@ server.onSdpPacket = async (contents) => {
     delete incompleteOffers[uuid];
 
     // Step 2.3: Create the connection
-    console.log("offer", offer.length, offer);
+    console.log("start 2.3: offer", offer.length, offer);
     const pc = new wrtc.RTCPeerConnection();
     pc.onicecandidate = (event) => {
       if (event.candidate) {
@@ -58,21 +58,26 @@ server.onSdpPacket = async (contents) => {
     };
 
     // Step 2.4: Create the file
-    console.log("uuid1", uuid);
-    await fs.promises.writeFile(`offers/${uuid}.txt`, answer.sdp);
-    console.log("uuid1", uuid);
+    console.log("step 2.4 start", uuid);
+    const res = await fs.promises.writeFile(`offers/${uuid}.txt`, answer.sdp);
+    console.log("sep 2.4 done, created file ", res);
 
     // Step 2.5: Commit the file
+    console.log("step 2.5 start");
     git.addConfig("user.email", "user@example.com");
     git.addConfig("user.name", "User");
     git.add(`.`); // Add all files
     git.commit(`Add file ${uuid}.txt`);
+    console.log("step 2.5 done");
 
     // Step 2.6: Push the file
+    console.log("step 2.6 start");
     git.push("origin", "main");
+    console.log("step 2.6 done");
 
     // Step 2.7: Clean up
     git.rm(`./offers/${uuid}.txt`);
+    console.log("step 2.7 done");
   } catch (e) {
     console.error(e);
   }

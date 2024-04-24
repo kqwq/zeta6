@@ -1,3 +1,7 @@
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 // Step 1
 /**
  * First step in connecting to a multiplayer server on Khan Academy.
@@ -52,13 +56,19 @@ async function connect(connectionString) {
   console.log("offer", offer.sdp.length, offer.sdp);
 
   // Step 3 (step 2 is in the server code)
-  // Attempt to fetch from the GitHub repository through jsdelivr
+  // Attempt to fetch from the GitHub repository through jsdelivr every 5 seconds for 8 tries
   const [ghUser, ghRepo, ghBranch] = repo.split("/");
   const url = `https://cdn.jsdelivr.net/gh/${ghUser}/${ghRepo}@${ghBranch}/offers/${uuid}.txt`;
-  const response = await fetch(url);
+  let response;
+  let tries = 0;
+  while (!response?.ok && tries < 8) {
+    await sleep(5000);
+    response = await fetch(url);
+    tries++;
+    console.log("fetch", tries, response.status, response.statusText);
+  }
   const answer = await response.text();
+
   console.log("answer1", answer.length, answer);
   pc.setRemoteDescription({ type: "answer", sdp: answer });
-
-  
 }
