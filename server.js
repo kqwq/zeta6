@@ -49,7 +49,7 @@ server.onSdpPacket = async(contents) => {
 
     // Step 2.4: Create the file
     console.log("uuid1", uuid);
-    fs.writeFileSync(`./offers/${uuid}.txt`, offer);
+    await fs.promises.writeFile(`offers/${uuid}.txt`, answer.sdp);
     console.log("uuid1", uuid);
 
     // Step 2.5: Commit the file
