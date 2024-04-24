@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KA Chat Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/simple-peer@9.11.1/simplepeer.min.js"></script>
+    <script src="./client.js"></script>
+    <script>
+      $ = (x) => document.querySelector(x);
+      $$ = (x) => document.querySelectorAll(x);
+      const messages = [];
+      async function eventHandler(type, data, peer) {
+        const dataStr = data.toString();
+        switch (type) {
+          case "connect":
+            window.peer = peer;
+            window.author = prompt("Enter your name:");
+            break;
+          case "data":
+            if (dataStr.startsWith("msg|")) {
+              const [_, author, content] = dataStr.split("|");
+              messages.push({
+                author,
+                content,
+                timestamp: new Date().toLocaleTimeString(),
+              });
+              renderMessages();
+            } else if (dataStr.startsWith("history|")) {
+              const history = JSON.parse(dataStr.split("|")[1]);
+              messages.push(...history);
+              renderMessages();
+            }
+            break;
+          case "error":
+            console.error(event.data);
+            break;
+        }
+      }
+      async function connectButton() {
+        $("input").setAttribute("disabled", true);
+        $("button").setAttribute("disabled", true);
+        const value = $("#input").value;
+        await connect(value, eventHandler);
+      }
+      async function finishConnection() {
+        $("#not-connected").style.display = "none";
+        $("#connected").style.display = "flex";
+        $("input").removeAttribute("disabled");
+        $("button").removeAttribute("disabled");
+      }
+      function renderMessages() {
+        $("#messages").innerHTML = messages
+          .map(
+            (message) => `
+          <div class="message">
+            <div class="message-main">
+            <span class="message-author">${message.author}</span>
+            <span class="message-content">${message.content}</span>
+            </div>
+            <span class="message-timestamp">${message.timestamp}</span>
+          </div>
+          `
+          )
+          .join("");
+      }
+      function checkEnter(event) {
+        if (event.key === "Enter") {
+          
+        }
+      }
+      function sendMessage() {
+        const message = $("#message-input").value;
+        if (!message) return;
+        messages.push({
+          author: window?.author || "Anonymous",
+          content: message,
+          timestamp: new Date().toLocaleTimeString(),
+        });
+        renderMessages();
+        $("#message-input").value = "";
+      }
+    </script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: black;
+        color: white;
+        display: flex;
+        height: 100vh;
+      }
+      /* Minimal styling */
+      main {
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      input,
+      button {
+        margin: 0.5rem;
+        padding: 0.5rem;
+        border: none;
+        border-radius: 0.25rem;
+        background-color: white;
+        color: black;
+      }
+      button {
+        cursor: pointer;
+      }
+      #not-connected {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #connected {
+        width: 80vw;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+      }
+      #messages-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+      #messages {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        height: 50vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      #input-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+      }
+      #message-input {
+        flex-grow: 1;
+      }
+      .message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        border-bottom: 1px solid white;
+        padding: 0.5rem;
+      }
+      .message-main {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+      }
+      .message-author {
+        font-weight: bold;
+        margin-right: 0.5rem;
+      }
+      .message-content {
+        flex-grow: 1;
+      }
+      .message-timestamp {
+        font-size: 0.75rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>KA Chat Demo</h1>
+
+      <div id="not-connected">
+        <p>Not connected - please enter a connection string below.</p>
+        <input type="text" id="input" placeholder="Connection String" />
+        <button onclick="connectButton()">Connect</button>
+      </div>
+      <div id="connected">
+        <div id="messages-container">
+          <div id="messages"></div>
+          <div id="input-container">
+            <input
+              onkeydown="checkEnter(event)"
+              type="text"
+              id="message-input"
+              placeholder="Message"
+            />
+            <button onclick="sendMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

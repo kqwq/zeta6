@@ -1,13 +1,16 @@
+import fs from "fs";
+
 export class KAChat {
   constructor() {
-    // Message format: { author: string, message: string, timestamp: Date }
+    // Message format: { author: string, content: string, timestamp: Date }
     this.last100messages = [];
   }
 
-  eventHandler(type, data, peer, peers) {
+  async eventHandler(type, data, peer, peers) {
     switch (type) {
       case "connect":
         console.log("Connected to peer", peer.uuid);
+        peer.send("history|" + JSON.stringify(this.last100messages));
         break;
       case "data":
         const dataStr = data.toString();
@@ -16,10 +19,11 @@ export class KAChat {
         // Possible data formats
         //   "msg|Hello, world!"
         //   "last-100"
-        if (dataStr.startsWith("msg|")) {
+        if (dataStr.startsWith("broadcast|")) {
+          const [_, author, content] = dataStr.split("|");
           const message = {
-            author: peer.uuid,
-            message: dataStr.slice(4),
+            author,
+            content,
             timestamp: new Date(),
           };
           this.last100messages.push(message);
@@ -27,10 +31,13 @@ export class KAChat {
             this.last100messages.shift();
           }
           for (const peer of peers) {
-            peer.send("msg|" + JSON.stringify(message));
+            peer.send(`msg|${author}|${content}`);
           }
-        } else if (dataStr === "last-100") {
-          peer.send("last-100|" + JSON.stringify(this.last100messages));
+          // Log to ./logs
+          await fs.promises.appendFile(
+            "./logs",
+            `${message.timestamp.toISOString()} ${author}: ${content}\n`
+          );
         }
       case "error":
         console.error("Error:", data);

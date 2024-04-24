@@ -9,8 +9,14 @@ async function sleep(ms) {
  * @param {string} connectionString
  * - Connection string in the format of ip:port:github-user/github-repo/branch
  * - Example: 123.1.1.1:4444:kqwq/zeta6/dev
+ * @param {function} eventHandler
+ * - Function to handle the events of the connection
+ * - The function should take 3 arguments:
+ *   - event: string (connect, data, open, close, error, offer)
+ *   - data: any
+ *   - peer: SimplePeer
  */
-async function connect(connectionString) {
+async function connect(connectionString, eventHandler) {
   // Step 1.1: Prepare packets for the connection offer
   const [ip, port, repo] = connectionString.split(":");
   const uuid = Math.random().toString(36).substring(2, 15);
@@ -76,20 +82,11 @@ async function connect(connectionString) {
   console.log("answer1", answer.length, answer);
   peer.signal({ type: "answer", sdp: answer });
   peer.on("connect", () => {
-    const chat = peer;
-    console.log("open");
-    chat.send("Hello, world! from client");
-
-    chat.on("data", (data) => {
-      console.log("message", data.toString());
-    });
-
-    chat.on("close", () => {
-      console.log("close");
-    });
-
-    chat.on("error", (err) => {
-      console.log("error", err);
-    });
+    eventHandler("connect", null, peer);
+    peer.on("data", (data) => eventHandler("data", data, peer));
+    peer.on("open", () => eventHandler("open", null, peer));
+    peer.on("close", () => eventHandler("close", null, peer));
+    peer.on("error", (err) => eventHandler("error", err, peer));
   });
+  eventHandler("offer", offer, peer);
 }
