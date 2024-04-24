@@ -8,6 +8,9 @@ export class KAChat {
 
   eventHandler(type, data, peer, peers) {
     switch (type) {
+      case "start":
+        console.log(data);
+        break;
       case "connect":
         console.log("Connected to peer", peer.uuid);
         peer.send("history|" + JSON.stringify(this.last100messages));
