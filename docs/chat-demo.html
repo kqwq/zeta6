@@ -12,6 +12,7 @@
       const messages = [];
       async function eventHandler(type, data, peer) {
         const dataStr = data?.toString();
+        console.log("newEvent", type, dataStr);
         switch (type) {
           case "connect":
             window.peer = peer;

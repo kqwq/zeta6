@@ -40,7 +40,7 @@ export class KAChat {
           );
         }
       case "error":
-        console.error("Error:", data);
+        console.error("Error:", data.toString());
         break;
     }
   }
