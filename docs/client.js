@@ -20,8 +20,8 @@ async function connect(connectionString) {
       iceServers: [
         {
           urls: [`turn:${ip}:${port}`],
-          username: "1",
-          credential: "password",
+          username: "my_secret_password",
+          credential: "my_secret_password",
         },
       ],
     },

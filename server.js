@@ -10,7 +10,8 @@ const server = new Turn({
   listeningPort: listenToPort,
   authMech: "long-term",
   credentials: {
-    username: "password",
+    username: "my_secret_username",
+    password: "my_secret_password",
   },
 });
 const git = simpleGit();
