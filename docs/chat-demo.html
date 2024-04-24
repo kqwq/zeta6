@@ -11,7 +11,7 @@
       $$ = (x) => document.querySelectorAll(x);
       const messages = [];
       async function eventHandler(type, data, peer) {
-        const dataStr = data.toString();
+        const dataStr = data?.toString();
         switch (type) {
           case "connect":
             window.peer = peer;
@@ -66,7 +66,6 @@
       }
       function checkEnter(event) {
         if (event.key === "Enter") {
-          
         }
       }
       function sendMessage() {
