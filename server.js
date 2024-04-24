@@ -22,8 +22,8 @@ export class zeta6server {
       console.log(
         type,
         data,
-        peer.address,
-        peers.map((p) => p.address)
+        peer.channelName,
+        peers.map((p) => p.remoteAddress)
       );
     };
     this.eventHandler = eventHandler || simpleEventHandler;
