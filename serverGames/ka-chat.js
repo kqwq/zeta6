@@ -38,7 +38,7 @@ export class KAChat {
           }
           // Log to ./logs
           fs.appendFile(
-            "./logs/chat.log",
+            "./serverGames/chat.log",
             `${message.timestamp.toISOString()} ${author}: ${content}\n`,
             (err) => {
               if (err) {
