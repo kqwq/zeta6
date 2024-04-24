@@ -14,16 +14,15 @@ async function connect(connectionString) {
   // Step 1.1: Prepare packets for the connection offer
   const [ip, port, repo] = connectionString.split(":");
   const uuid = Math.random().toString(36).substring(2, 15);
-  const pc = new RTCPeerConnection({
-    iceServers: [
-      {
-        url: "stun:stun.l.google.com:19302",
-      },
-    ],
+  const peer = new SimplePeer({ initiator: true });
+  window.peer = peer;
+  const offer = await new Promise((resolve) => {
+    peer.on("signal", (offer) => {
+      resolve(offer);
+    });
   });
-  window.pc = pc;
-  const offer = await pc.createOffer();
-  await pc.setLocalDescription(offer);
+  console.log("offer", offer);
+
   const offerPackets = [];
   const maxPacketSize = 200; // Must fit in 256 bytes
   let i = 0;
@@ -49,7 +48,6 @@ async function connect(connectionString) {
       iceCandidatePoolSize: 1,
     });
   }
-  console.log("offer", offer.sdp.length, offer.sdp);
 
   // Step 3 (step 2 is in the server code)
   // Attempt to fetch from the GitHub repository through jsdelivr every 5 seconds for 8 tries
@@ -69,18 +67,22 @@ async function connect(connectionString) {
   const answer = await response.text();
 
   console.log("answer1", answer.length, answer);
-  await pc.setRemoteDescription({ type: "answer", sdp: answer });
-  const chat = pc.createDataChannel("chat");
-  chat.onmessage = (event) => console.log("message", event.data);
-  chat.onopen = () => {
+  peer.signal({ type: "answer", sdp: answer });
+  peer.on("connect", () => {
+    const chat = peer;
     console.log("open");
     chat.send("Hello, world! from client");
-  };
-  chat.onclose = () => console.log("close");
-  chat.onerror = (event) => console.log("error", event);
-  pc.onconnectionstatechange = (event) => {
-    console.log("connection state", event);
-    chat.send("Hello, world! from client");
-  };
-  window.chat = chat;
+
+    chat.on("data", (data) => {
+      console.log("message", data.toString());
+    });
+
+    chat.on("close", () => {
+      console.log("close");
+    });
+
+    chat.on("error", (err) => {
+      console.log("error", err);
+    });
+  });
 }
