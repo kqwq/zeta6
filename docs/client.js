@@ -53,7 +53,7 @@ async function connect(connectionString) {
   // Step 3 (step 2 is in the server code)
   // Attempt to fetch from the GitHub repository through jsdelivr every 5 seconds for 8 tries
   const [ghUser, ghRepo, ghBranch] = repo.split("/");
-  const url = `https://cdn.jsdelivr.net/gh/${ghUser}/${ghRepo}@${ghBranch}/offers/${uuid}.txt`;
+  const url = `https://cdn.jsdelivr.net/gh/${ghUser}/${ghRepo}@${ghBranch}/offers/${uuid}.js`;
   let response;
   let tries = 0;
   while (!response?.ok) {
@@ -61,11 +61,17 @@ async function connect(connectionString) {
     if (tries > 8) {
       throw new Error(`Failed to fetch: ${url} after ${tries} tries`);
     }
-    await sleep(3000);
-    response = await fetch(url);
-    console.log("fetch", tries, response.status, response.statusText);
+    await sleep(4000);
+    const scriptTag = document.createElement("script");
+    scriptTag.src = url;
+    document.head.appendChild(scriptTag);
+    await sleep(1000);
+    const response = window.offer;
+    if (response) {
+      break;
+    }
   }
-  const answer = await response.text();
+  const answer = window.offer;
 
   console.log("answer1", answer.length, answer);
   peer.signal({ type: "answer", sdp: answer });

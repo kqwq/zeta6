@@ -73,7 +73,8 @@ server.onSdpPacket = async (contents) => {
 
   // Step 2.4: Create the file
   console.log("step 2.4 start", uuid);
-  const res = await fs.promises.writeFile(`offers/${uuid}.txt`, answer.sdp);
+  const code = `window.offer = ${JSON.stringify(answer.sdp)};`;
+  const res = await fs.promises.writeFile(`offers/${uuid}.js`, code);
   console.log("sep 2.4 done, created file ", res);
 
   // Step 2.5: Commit the file
@@ -81,7 +82,7 @@ server.onSdpPacket = async (contents) => {
   git.addConfig("user.email", "user@example.com");
   git.addConfig("user.name", "User");
   git.add(`.`); // Add all files
-  git.commit(`Add file ${uuid}.txt`);
+  git.commit(`Add file ${uuid}.js`);
   console.log("step 2.5 done");
 
   // Step 2.6: Push the file
