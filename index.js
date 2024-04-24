@@ -3,4 +3,6 @@ import { KAChat } from "./serverGames/ka-chat.js";
 
 new KAChat();
 
-new zeta6server(47777, KAChat.eventHandler);
+const eh = KAChat.eventHandler;
+
+new zeta6server(47777, eh);

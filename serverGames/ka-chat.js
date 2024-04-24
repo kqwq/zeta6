@@ -6,7 +6,7 @@ export class KAChat {
     this.last100messages = [];
   }
 
-  async eventHandler(type, data, peer, peers) {
+  eventHandler(type, data, peer, peers) {
     switch (type) {
       case "connect":
         console.log("Connected to peer", peer.uuid);
@@ -34,7 +34,7 @@ export class KAChat {
             peer.send(`msg|${author}|${content}`);
           }
           // Log to ./logs
-          await fs.promises.appendFile(
+          fs.appendFile(
             "./logs",
             `${message.timestamp.toISOString()} ${author}: ${content}\n`
           );

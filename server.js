@@ -70,7 +70,6 @@ export class zeta6server {
         });
       });
       peer.on("connect", () => {
-        console.log("this test", this);
         this.eventHandler("connect", null, peer, this.peers);
         this.peers.push(peer);
         peer.on("data", (data) =>
