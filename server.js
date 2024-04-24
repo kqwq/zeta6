@@ -10,10 +10,10 @@ const server = new Turn({
   listeningPort: listenToPort,
   authMech: "long-term",
   credentials: {
-    username: "my_secret_username",
-    password: "my_secret_password",
+    my_secret_username: "my_secret_password",
   },
 });
+
 const git = simpleGit();
 const incompleteOffers = {}; // { uuid1: [packet1, packet2, ...] }
 server.onSdpPacket = async (contents) => {
