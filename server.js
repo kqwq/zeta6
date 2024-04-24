@@ -44,11 +44,12 @@ server.onSdpPacket = async (contents) => {
         console.log("candidate", event.candidate);
       }
     };
-    pc.ondatachannel = (event) => {
-      const chat = event.channel;
-      chat.onmessage = (event) => console.log("message", event.data);
-      chat.send("Hello, world! from server");
-    };
+    const chat = pc.createDataChannel("chat");
+    chat.onmessage = (event) => console.log("message", event.data);
+    chat.send("Hello, world! from server");
+    chat.onopen = () => console.log("open");
+    chat.onclose = () => console.log("close");
+    chat.onerror = (event) => console.log("error", event);
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
 

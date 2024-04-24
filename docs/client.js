@@ -15,6 +15,7 @@ async function connect(connectionString) {
   const [ip, port, repo] = connectionString.split(":");
   const uuid = Math.random().toString(36).substring(2, 15);
   const pc = new RTCPeerConnection();
+  window.pc = pc;
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
   pc.onicecandidate = (event) => {
@@ -22,11 +23,12 @@ async function connect(connectionString) {
       console.log("candidate", event.candidate);
     }
   };
-  pc.ondatachannel = (event) => {
-    const chat = event.channel;
-    chat.onmessage = (event) => console.log("message", event.data);
-    chat.send("Hello, world! from client");
-  };
+  const chat = pc.createDataChannel("chat");
+  chat.onmessage = (event) => console.log("message", event.data);
+  chat.send("Hello, world! from client");
+  chat.onopen = () => console.log("open");
+  chat.onclose = () => console.log("close");
+  chat.onerror = (event) => console.log("error", event);
   const offerPackets = [];
   const maxPacketSize = 200; // Must fit in 256 bytes
   let i = 0;
