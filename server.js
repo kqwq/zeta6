@@ -16,15 +16,12 @@ const git = simpleGit();
 const incompleteOffers = {}; // { uuid1: [packet1, packet2, ...] }
 server.onSdpPacket = async (contents) => {
   console.log("sdp", JSON.stringify(contents));
-  try {
-    // Step 2.1: Parse the packet
-    const [version, uuid, packetNum, numPackets, ...rest] = contents.split(":");
-    const data = rest.join(":");
-    if (version !== "zeta6" || !uuid || isNaN(packetNum) || isNaN(numPackets)) {
-      throw new Error(`Malformed packet: ${contents}`);
-    }
-  } catch (e) {
-    console.error(e);
+
+  // Step 2.1: Parse the packet
+  const [version, uuid, packetNum, numPackets, ...rest] = contents.split(":");
+  const data = rest.join(":");
+  if (version !== "zeta6" || !uuid || isNaN(packetNum) || isNaN(numPackets)) {
+    throw new Error(`Malformed packet: ${contents}`);
   }
 
   // Step 2.2: Assemble the packet. If all packets are received, create the connection
