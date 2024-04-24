@@ -62,6 +62,7 @@ export class zeta6server {
         initiator: false,
         wrtc: wrtc,
       });
+      peer.uuid = uuid;
       await peer.signal({ type: "offer", sdp: offer });
       const answer = await new Promise((resolve) => {
         peer.on("signal", (answer) => {
