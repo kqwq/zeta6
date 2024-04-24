@@ -75,7 +75,7 @@
       function sendMessage() {
         const message = $("#message-input").value;
         if (!message) return;
-        window.peer.send(`msg|${window.author}|${message}`);
+        window.peer.send(`broadcast|${window.author}|${message}`);
         $("#message-input").value = "";
       }
     </script>
