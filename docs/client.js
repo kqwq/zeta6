@@ -60,7 +60,7 @@ async function connect(connectionString) {
     if (tries > 8) {
       throw new Error(`Failed to fetch: ${url} after ${tries} tries`);
     }
-    await sleep(5000);
+    await sleep(1000);
     response = await fetch(url);
     console.log("fetch", tries, response.status, response.statusText);
   }
