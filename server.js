@@ -72,7 +72,7 @@ server.onSdpPacket = async (contents) => {
 
     // Step 2.6: Push the file
     console.log("step 2.6 start");
-    git.push("origin", "main");
+    git.push();
     console.log("step 2.6 done");
 
     // Step 2.7: Clean up

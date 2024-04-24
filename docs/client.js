@@ -61,10 +61,13 @@ async function connect(connectionString) {
   const url = `https://cdn.jsdelivr.net/gh/${ghUser}/${ghRepo}@${ghBranch}/offers/${uuid}.txt`;
   let response;
   let tries = 0;
-  while (!response?.ok && tries < 8) {
+  while (!response?.ok) {
+    tries++;
+    if (tries > 8) {
+      throw new Error(`Failed to fetch: ${url} after ${tries} tries`);
+    }
     await sleep(5000);
     response = await fetch(url);
-    tries++;
     console.log("fetch", tries, response.status, response.statusText);
   }
   const answer = await response.text();
