@@ -14,7 +14,7 @@ const server = new Turn({
 });
 const git = simpleGit();
 const incompleteOffers = {}; // { uuid1: [packet1, packet2, ...] }
-server.onSdpPacket = async(contents) => {
+server.onSdpPacket = async (contents) => {
   console.log("sdp", JSON.stringify(contents));
   try {
     // Step 2.1: Parse the packet
@@ -46,6 +46,16 @@ server.onSdpPacket = async(contents) => {
     await pc.setRemoteDescription({ type: "offer", sdp: offer });
     const answer = await pc.createAnswer();
     console.log("answer2", answer.sdp.length, answer.sdp);
+
+    // Step 2.3.5: Listen for when the connection is established
+    pc.oniceconnectionstatechange = () => {
+      if (pc.iceConnectionState === "connected") {
+        console.log("connected");
+        const chat = pc.createDataChannel("chat");
+        chat.onmessage = (event) => console.log("message", event.data);
+        chat.send("Hello, world! from server");
+      }
+    };
 
     // Step 2.4: Create the file
     console.log("uuid1", uuid);

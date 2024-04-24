@@ -10,6 +10,16 @@ async function connect(connectionString) {
   const pc = new RTCPeerConnection();
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
+  pc.onicecandidate = (event) => {
+    if (event.candidate) {
+      console.log("candidate", event.candidate);
+    }
+  }
+  pc.ondatachannel = (event) => {
+    const chat = event.channel;
+    chat.onmessage = (event) => console.log("message", event.data);
+    chat.send("Hello, world! from client");
+  }
   const offerPackets = [];
   const maxPacketSize = 200; // Must fit in 256 bytes
   let i = 0;
