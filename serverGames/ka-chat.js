@@ -35,8 +35,13 @@ export class KAChat {
           }
           // Log to ./logs
           fs.appendFile(
-            "./logs",
-            `${message.timestamp.toISOString()} ${author}: ${content}\n`
+            "./logs/chat.log",
+            `${message.timestamp.toISOString()} ${author}: ${content}\n`,
+            (err) => {
+              if (err) {
+                console.error("Failed to write to chat.log:", err);
+              }
+            }
           );
         }
       case "error":
