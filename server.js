@@ -19,7 +19,7 @@ export class zeta6server {
   constructor(port = 47777, eventHandler) {
     this.port = port;
     const simpleEventHandler = (type, data, peer, peers) => {
-      console.log(type, data, "(peer)"`(${peers.length} peers connected)`);
+      console.log(type, data, "(peer)", `(${peers.length} peers connected)`);
     };
     this.eventHandler = eventHandler || simpleEventHandler;
     this.turn = new Turn({
