@@ -36,6 +36,7 @@ server.onSdpPacket = (contents) => {
     delete incompleteOffers[uuid];
 
     // Step 2.3: Create the connection
+    console.log("offer", offer.length, offer);
     const pc = new wrtc.RTCPeerConnection();
     pc.onicecandidate = (event) => {
       if (event.candidate) {
