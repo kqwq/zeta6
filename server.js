@@ -21,7 +21,7 @@ export class zeta6server {
     const simpleEventHandler = (type, data, peer, peers) => {
       console.log(type, data, "(peer)", `(${peers.length} peers connected)`);
     };
-    this.eventHandler = eventHandler || simpleEventHandler;
+    this.eventHandler = eventHandler;
     this.turn = new Turn({
       listeningPort: port,
       authMech: "long-term",

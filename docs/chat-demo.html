@@ -16,6 +16,8 @@
           case "connect":
             window.peer = peer;
             window.author = prompt("Enter your name:");
+            $("#message-input").placeholder = `Message as ${window.author}`;
+            finishConnection();
             break;
           case "data":
             if (dataStr.startsWith("msg|")) {
@@ -38,13 +40,13 @@
         }
       }
       async function connectButton() {
-        $("input").setAttribute("disabled", true);
-        $("button").setAttribute("disabled", true);
+        $("#not-connected").style.display = "none";
+        $("#loading").style.display = "flex";
         const value = $("#input").value;
         await connect(value, eventHandler);
       }
       async function finishConnection() {
-        $("#not-connected").style.display = "none";
+        $("#loading").style.display = "none";
         $("#connected").style.display = "flex";
         $("input").removeAttribute("disabled");
         $("button").removeAttribute("disabled");
@@ -66,17 +68,13 @@
       }
       function checkEnter(event) {
         if (event.key === "Enter") {
+          sendMessage();
         }
       }
       function sendMessage() {
         const message = $("#message-input").value;
         if (!message) return;
-        messages.push({
-          author: window?.author || "Anonymous",
-          content: message,
-          timestamp: new Date().toLocaleTimeString(),
-        });
-        renderMessages();
+        window.peer.send(`msg|${window.author}|${message}`);
         $("#message-input").value = "";
       }
     </script>
@@ -108,11 +106,15 @@
       }
       button {
         cursor: pointer;
+        background-color: #14bf96;
       }
       #not-connected {
         display: flex;
         flex-direction: column;
         align-items: center;
+      }
+      #loading {
+        display: none;
       }
       #connected {
         width: 80vw;
@@ -176,8 +178,16 @@
 
       <div id="not-connected">
         <p>Not connected - please enter a connection string below.</p>
-        <input type="text" id="input" placeholder="Connection String" />
-        <button onclick="connectButton()">Connect</button>
+        <div style="display: flex; flex-direction: row; align-items: center">
+          <input type="text" id="input" placeholder="Connection String" />
+          <button onclick="connectButton()">Connect</button>
+        </div>
+      </div>
+      <div id="loading">
+        <div>
+          <p>Loading... should take no longer than 5 seconds</p>
+          <small>Check console for errors</small>
+        </div>
       </div>
       <div id="connected">
         <div id="messages-container">
