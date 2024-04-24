@@ -10,7 +10,7 @@ const server = new Turn({
   listeningPort: listenToPort,
   authMech: "long-term",
   credentials: {
-    my_secret_username: "my_secret_password",
+    username: "password",
   },
 });
 
