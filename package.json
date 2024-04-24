@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node-turn": "github:kqwq/node-turn"
+    "node-turn": "github:kqwq/node-turn",
+    "simple-git": "^3.24.0"
   },
   "type": "module"
 }
