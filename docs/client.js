@@ -18,19 +18,6 @@ async function connect(connectionString) {
   window.pc = pc;
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
-  pc.onicecandidate = (event) => {
-    if (event.candidate) {
-      console.log("candidate", event.candidate);
-    }
-  };
-  const chat = pc.createDataChannel("chat");
-  chat.onmessage = (event) => console.log("message", event.data);
-  chat.onopen = () => {
-    console.log("open");
-    chat.send("Hello, world! from client");
-  };
-  chat.onclose = () => console.log("close");
-  chat.onerror = (event) => console.log("error", event);
   const offerPackets = [];
   const maxPacketSize = 200; // Must fit in 256 bytes
   let i = 0;
@@ -56,7 +43,6 @@ async function connect(connectionString) {
       iceCandidatePoolSize: 1,
     });
   }
-
   console.log("offer", offer.sdp.length, offer.sdp);
 
   // Step 3 (step 2 is in the server code)
@@ -78,4 +64,17 @@ async function connect(connectionString) {
 
   console.log("answer1", answer.length, answer);
   await pc.setRemoteDescription({ type: "answer", sdp: answer });
+  const chat = pc.createDataChannel("chat");
+  chat.onmessage = (event) => console.log("message", event.data);
+  chat.onopen = () => {
+    console.log("open");
+    chat.send("Hello, world! from client");
+  };
+  chat.onclose = () => console.log("close");
+  chat.onerror = (event) => console.log("error", event);
+  pc.onconnectionstatechange = (event) => {
+    console.log("connection state", event);
+    chat.send("Hello, world! from client");
+  };
+  window.chat = chat;
 }

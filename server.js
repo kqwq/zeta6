@@ -39,21 +39,19 @@ server.onSdpPacket = async (contents) => {
     console.log("start 2.3: offer", offer.length, offer);
     const pc = new wrtc.RTCPeerConnection();
     await pc.setRemoteDescription({ type: "offer", sdp: offer });
-    pc.onicecandidate = (event) => {
-      if (event.candidate) {
-        console.log("candidate", event.candidate);
-      }
-    };
-    const chat = pc.createDataChannel("chat");
-    chat.onmessage = (event) => console.log("message", event.data);
-    chat.onopen = () => {
-      console.log("open");
-      chat.send("Hello, world! from server");
-    };
-    chat.onclose = () => console.log("close");
-    chat.onerror = (event) => console.log("error", event);
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
+    const chat = pc.createDataChannel("chat");
+    chat.onmessage = (event) => console.log("message", event.data);
+    chat.onopen = (event) => console.log("open", event);
+    chat.onclose = (event) => console.log("close", event);
+    chat.onerror = (event) => console.log("error", event);
+    pc.onconnectionstatechange = (event) => {
+      console.log("connection state", event);
+      chat.send("Hello, world! from server");
+    };
+
+
 
     // Step 2.4: Create the file
     console.log("step 2.4 start", uuid);
