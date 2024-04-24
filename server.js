@@ -1,6 +1,7 @@
 import Turn from "node-turn";
 import simpleGit from "simple-git";
 import fs from "fs";
+import { RTCPeerConnection } from "wrtc";
 
 // Step 2. Listen with TURN server and commit the file
 const listenToPort = 47777;
