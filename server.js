@@ -1,7 +1,7 @@
 import Turn from "node-turn";
 import simpleGit from "simple-git";
 import fs from "fs";
-import { RTCPeerConnection } from "wrtc";
+import wrtc from "wrtc";
 
 // Step 2. Listen with TURN server and commit the file
 const listenToPort = 47777;
@@ -36,7 +36,7 @@ server.onSdpPacket = (contents) => {
     delete incompleteOffers[uuid];
 
     // Step 2.3: Create the connection
-    const pc = new RTCPeerConnection();
+    const pc = new wrtc.RTCPeerConnection();
     pc.onicecandidate = (event) => {
       if (event.candidate) {
         console.log("candidate", event.candidate);
