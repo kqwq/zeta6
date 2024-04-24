@@ -54,7 +54,7 @@ server.onSdpPacket = async (contents) => {
   peer.on("connect", () => {
     const chat = peer;
     console.log("open");
-    chat.send("Hello, world! from client");
+    chat.send("Hello, world! from server");
 
     chat.on("data", (data) => {
       console.log("message", data.toString());

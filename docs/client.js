@@ -71,7 +71,7 @@ async function connect(connectionString) {
       break;
     }
   }
-  const answer = JSON.parse(window.offer);
+  const answer = window.offer;
 
   console.log("answer1", answer.length, answer);
   peer.signal({ type: "answer", sdp: answer });
