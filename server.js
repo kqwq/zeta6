@@ -44,13 +44,13 @@ server.onSdpPacket = (contents) => {
       }
     };
     pc.setRemoteDescription({ type: "offer", sdp: offer });
-    pc.createAnswer().then((answer) => {
-      pc.setLocalDescription(answer);
-      console.log("answer", answer.sdp.length, answer.sdp);
-    });
+    const answer = pc.createAnswer();
+    console.log("answer2", answer.sdp.length, answer.sdp);
 
     // Step 2.4: Create the file
+    console.log("uuid1", uuid);
     fs.writeFileSync(`./offers/${uuid}.txt`, offer);
+    console.log("uuid1", uuid);
 
     // Step 2.5: Commit the file
     git.addConfig("user.email", "user@example.com");
