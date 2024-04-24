@@ -16,9 +16,17 @@ export class zeta6server {
    *   | peer is a SimplePeer object
    *   | peers is an array of connected SimplePeer objects
    */
-  constructor(port = 47777, eventHandler = console.log) {
+  constructor(port = 47777, eventHandler) {
     this.port = port;
-    this.eventHandler = eventHandler;
+    const simpleEventHandler = (type, data, peer, peers) => {
+      console.log(
+        type,
+        data,
+        peer.address,
+        peers.map((p) => p.address)
+      );
+    };
+    this.eventHandler = eventHandler || simpleEventHandler;
     this.turn = new Turn({
       listeningPort: port,
       authMech: "long-term",
