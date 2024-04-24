@@ -73,5 +73,5 @@ async function connect(connectionString) {
   const answer = await response.text();
 
   console.log("answer1", answer.length, answer);
-  pc.setRemoteDescription({ type: "answer", sdp: answer });
+  await pc.setRemoteDescription({ type: "answer", sdp: answer });
 }
