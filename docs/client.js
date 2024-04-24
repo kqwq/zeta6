@@ -14,7 +14,13 @@ async function connect(connectionString) {
   // Step 1.1: Prepare packets for the connection offer
   const [ip, port, repo] = connectionString.split(":");
   const uuid = Math.random().toString(36).substring(2, 15);
-  const pc = new RTCPeerConnection();
+  const pc = new RTCPeerConnection({
+    iceServers: [
+      {
+        url: "stun:stun.l.google.com:19302",
+      },
+    ],
+  });
   window.pc = pc;
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);

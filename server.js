@@ -37,7 +37,13 @@ server.onSdpPacket = async (contents) => {
 
     // Step 2.3: Create the connection
     console.log("start 2.3: offer", offer.length, offer);
-    const pc = new wrtc.RTCPeerConnection();
+    const pc = new wrtc.RTCPeerConnection({
+      iceServers: [
+        {
+          url: "stun:stun.l.google.com:19302",
+        },
+      ],
+    });
     await pc.setRemoteDescription({ type: "offer", sdp: offer });
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
@@ -50,8 +56,6 @@ server.onSdpPacket = async (contents) => {
       console.log("connection state", event);
       chat.send("Hello, world! from server");
     };
-
-
 
     // Step 2.4: Create the file
     console.log("step 2.4 start", uuid);
